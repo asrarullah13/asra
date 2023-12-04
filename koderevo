@@ -1,0 +1,36 @@
+#include <DHT.h>
+
+#define DHTPIN 2  // Pin data DHT22 terhubung ke pin 2
+#define DHTTYPE DHT22  // Jenis sensor DHT
+
+#define RELAY_PIN 7 // Pin relay terhubung ke pin 7
+
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(RELAY_PIN, OUTPUT);
+}
+
+void loop() {
+  delay(2000);  // Jeda antara pembacaan suhu
+  float humidity = dht.readHumidity();
+  float temperature = dht.readTemperature();
+
+  if (!isnan(humidity) && !isnan(temperature)) {
+    Serial.print("Humidity: ");
+    Serial.print(humidity);
+    Serial.print("% Temperature: ");
+    Serial.println(temperature);
+
+    if (temperature < 75) {
+      // Matikan lampu (relay aktif)
+      digitalWrite(RELAY_PIN, HIGH);
+    } else {
+      // Hidupkan lampu (relay mati)
+      digitalWrite(RELAY_PIN, LOW);
+    }
+  } else {
+    Serial.println("Gagal membaca suhu dan kelembaban dari sensor DHT");
+  }
+}
